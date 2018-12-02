@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>New York Times Search</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="assets/css/main.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="assets/javascript/main.js"></script>
+</head>
+<body>
+    
+    <div class="container topcontainer" >
+        <div class="jumbotron jumbotron-fluid bg-primary">
+            <div class="container">
+                <h1 class="display-4 text-center">New York Times Search</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md card">
+                <p class="card-header"><strong>Search Parameters</strong></p>
+            </div>
+        </div>
+        <div class="border">
+            <div class="row">
+                <div class="col-md">
+                    <label for="search">Search Term:</label>
+                    <input class="form-control" type="text" id="search">
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md">
+                    <label for="records">Number of records to retrieve:</label>
+                    <input class="form-control" type="text" value="5" id="records">
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-4 ">
+                    <label for="startYear">Start year:</label>
+                    <select class="form-control dateForm" id="startYear"></select>
+                </div>
+                <div class="col-md-4">
+                    <label for="startMonth">Start month:</label>
+                    <select class="form-control dateForm" id="startMonth"></select>
+                </div>
+                <div class="col-md-4">
+                    <label for="startDay ">Start day:</label>
+                    <select class="form-control dateForm" id="startDay"></select>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="endYear">End year</label>
+                    <select class="form-control" type="text" id="endYear"></select>
+                </div>
+                <div class="col-md-4">
+                    <label for="endMonth">End month</label>
+                    <select class="form-control" type="text" id="endMonth"></select>
+                </div>
+                <div class="col-md-4">
+                    <label for="endDay">End day</label>
+                    <select class="form-control" type="text" id="endDay"></select>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md">
+                    <button id="searchButton" type="button" class="btn btn-link">Search</button>
+                    <button id="clear" type="button" class="btn btn-link">Clear Results</button>
+                </div>
+            </div>  
+        </div>  
+    </div>
+    <br>
+    <div class="container bottomcontainer border">
+        <div class="row">
+            <div class="col-md card">
+                <p class="card-header"><strong>Top Articles</strong></p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md">
+                <div id="articles"></div>
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>
