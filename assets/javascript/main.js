@@ -2,78 +2,23 @@ var monthText = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "July", "Aug", "Sep"
 var days = 31;
 var selDay, selMonth, selYear, compDate;
 var selEndDay, selEndMonth, selEndYear, compEndDate;
-    
-    //takes in query and options for start and end date. If start or end is
-    //omitted, a default of todays date is inserted
-    //**********NOTE:  amount = number of sets to get. each increment adds 10 results 
-    //to JSON object returned EX: 0 = 0 - 9, 1 = 10 - 19.
-
-    //NOTHER NOTE: date needs to be in YYYYMMDD format, and in a string
-    function searchNYT( entry, page, amount ,start, end ){
-
-        var d = new Date(), startDate = start, endDate = end;
-
-       
-
-        if( start === undefined ){
-            startDate = d.getFullYear().toString() + d.getMonth().toString() + d.getDay().toString();
-            console.log(startDate);
-        }
-        if( end === undefined ){
-            endDate = d.getFullYear().toString() + d.getMonth().toString() + d.getDay().toString();
-            console.log(endDate);
-        }
-        if( page === undefined )
-            page = 0;
-        
-
-        let urlQuery = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
-        urlQuery += '?' + $.param({
-                'api-key': "46e02f2d014a489ea182a65f77eb921e",
-                'q': entry,
-                'begin_date': startDate,
-                'end_date' : endDate,
-                'page' : page
-                
-            });
-
-        var list = new Array();
-        $.ajax({ 'url': urlQuery, 'method':"GET" }).then(function(callBack){
-
-            console.log(callBack);
-
-            let results = callBack.response.docs;
-
-            for( let i = 0; i < amount; i++ ){
-                let cutTime = results[i].pub_date.indexOf('T');
-
-                results[i].pub_date = results[i].pub_date.slice( 0, cutTime );
-
-                $("#articles").append( "<div id='listing" + (i * (page * 10)) + "' class='bg-primary rounded mt-3 mb-3 p-4'>" +
-                
-                    "<h2><a class='text-white' href='" + results[i].web_url + "'>" + 
-                        results[i].headline.main + "</a></h2><br><h4>" + results[i].pub_date + "</h4></div>"
-
-                );
-
-            }
-        });
-        
-    }
+var page, amount;
 
 window.onload = function(){
 
     let curDate = new Date();
 
-    //load up start date
+    //load up start date, maxes out at current date
     for( let i = 1969; i < curDate.getFullYear() + 1; i++ ){
         $("#startYear").append('<option>' + i + '</option>');
     }
 
+    //Load month field based on month
     for( let i = 1; i < 13; i++ ){
         $("#startMonth").append('<option>' + monthText[i - 1] + '</option>');
     }
 
+    //Load day field
     for( let i = 1; i < days; i++ ){
         $("#startDay").append('<option id="' + i + '">' + i + '</option>');
     }
@@ -103,6 +48,7 @@ window.onload = function(){
     selEndDay = "" + $("#endDay").val();
     compEndDate = selEndYear + selEndMonth + selEndDay;
     
+    //If start day is changed in the html field...
     $("#startYear, #startDay, #startMonth").change( function(){
 
         let numPad = "";
@@ -120,6 +66,7 @@ window.onload = function(){
 
             let dayChange = $(this).val();
 
+            //changes amount of days in month depending. I didn't consider leap year though...
             if( dayChange === "Apr" || dayChange === "Jun" || dayChange === "Sep" || 
                 dayChange === "Nov" )
                 days = 30;
@@ -192,16 +139,54 @@ window.onload = function(){
         $("#articles").empty();
     });
 
+    function nytApi( topic, p, a, start, end ){        
+
+                let urlQuery = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
+                urlQuery += '?' + $.param({
+                    'api-key': "46e02f2d014a489ea182a65f77eb921e",
+                    'q': topic,
+                    'begin_date': start,
+                    'end_date' : end,
+                    'page' : p   
+                });
+
+                $.ajax({ 'url': urlQuery, 'method':"GET" })
+                .done(function(callBack){
+
+                    let results = callBack.response.docs;
+
+                    for( let i = 0; i < 10 && i < a; i++ ){
+                        let cutTime = results[i].pub_date.indexOf('T');
+
+                        results[i].pub_date = results[i].pub_date.slice( 0, cutTime );
+
+                        $("#articles").append( "<div id='listing" + (i + (p * 10)) + "' class='bg-primary rounded mt-3 mb-3 p-4'>" +
+                
+                            "<h2><a class='text-white' href='" + results[i].web_url + "'>" + 
+                                results[i].headline.main + "</a></h2><br><h4>" + results[i].pub_date + "</h4></div>"
+
+                        );
+
+                    }
+        
+                });
+    }
+
     $("#searchButton").on( "click", function(){
 
-        let page = 0, i = 0;
+        amount = parseInt($("#records").val());
 
-        
+        //loads a page at a time and waits for api limit to pass
+        for( let p = 0, am = amount; am > 0; am -= 10, p++ ){
+            (function(p, am, attrib){
+                setTimeout( function(){
+                    nytApi( $("#search").val(), p, am, compDate, compEndDate );
+                }, p * 2000 );
 
-            searchNYT( $("#search").val(), page, parseInt($("#records").val()) ,compDate, compEndDate );
-            i += 10;
+                
 
-       
-        
+            })(p, am);
+    
+        }
     });
 }
